@@ -34,11 +34,20 @@ layout: default
             // Also add a small timeout: if the video hasn't loaded metadata within 2500ms, switch to fallback
             window.addEventListener('load', function() {
                 try {
-                    var vid = document.querySelector('.home-background-media');
-                    if (!vid) return;
+                    // Prefer an actual <video> element inside the media container.
+                    var container = document.querySelector('.home-background-media');
+                    if (!container) return;
+                    var vid = null;
+                    if (container.tagName && container.tagName.toLowerCase() === 'video') {
+                        vid = container;
+                    } else {
+                        vid = container.querySelector && container.querySelector('video');
+                    }
+                    // If there's no real HTMLVideoElement (e.g. we embedded an iframe), skip the timeout/ended logic.
+                    if (!vid || typeof vid.readyState === 'undefined') return;
                     var switched = false;
                     var timeout = setTimeout(function() {
-                        if (!switched && (!vid.readyState || vid.readyState < 1)) {
+                        if (!switched && (typeof vid.readyState === 'undefined' || vid.readyState < 1)) {
                             document.documentElement.classList.add('use-fallback');
                             switched = true;
                         }
@@ -48,7 +57,6 @@ layout: default
                     vid.addEventListener('ended', function() {
                         try {
                             if (!document.documentElement.classList.contains('use-fallback')) {
-                                // Reset to start and attempt to play again (some browsers require this)
                                 vid.currentTime = 0;
                                 vid.play().catch(function(){});
                             }
@@ -433,10 +441,9 @@ layout: default
 </style>
 
 <div class="home-background-fallback" aria-hidden="true"></div>
-<video class="home-background-media" autoplay muted loop playsinline preload="metadata" poster="/images/main_page/mitoc_winter_Florian_2024.jpg" aria-hidden="true">
-    <source src="/images/main_page/mitoc_winter_ashay.webm" type="video/webm">
-    <source src="/images/main_page/mitoc_winter_ashay.mp4" type="video/mp4">
-</video>
+<div class="home-background-media" aria-hidden="true">
+    <iframe src="https://www.youtube.com/embed/kX6MQnqms_k?start=6&autoplay=1&mute=1&loop=1&playlist=kX6MQnqms_k&controls=0&modestbranding=1&playsinline=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen style="width:100%;height:100%;border:0;position:absolute;left:0;top:0;"></iframe>
+</div>
 <div class="home-background-overlay" aria-hidden="true"></div>
 
 <div class="home-calendar-panel collapsed" aria-label="MITOC events calendar">
