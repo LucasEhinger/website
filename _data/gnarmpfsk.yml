@@ -7,6 +7,10 @@
 #               For approximate dates, pick a best guess and set date_display.
 # date_display: optional; shown instead of the formatted date (e.g. "c. 1980").
 # type:         exactly one of the types listed below.
+#
+# External articles use `link` instead of `drive`, plus `image` (a resized copy
+# saved in /images/gnarmpfsk/articles/), `source` (the publication), `summary`,
+# and optionally `author`.
 
 types:
   - GNARMPFSK
@@ -14,6 +18,15 @@ types:
   - Stories
   - Other
 documents:
+  - link: https://news.mit.edu/2021/climbing-new-heights-school-of-rock-mit-outing-club-1208
+    title: "Climbing new heights across New England"
+    source: MIT News
+    author: Stephanie Tran, Division of Student Life
+    date: "2021-12-08"
+    image: /images/gnarmpfsk/articles/mit-news-2021-school-of-rock.jpg
+    summary: "Since 2014, MIT Outing Club members — new and advanced outdoor enthusiasts — come together for School of Rock, a program teaching and advancing outdoor rock-climbing skills."
+    type: "News article"
+
   - drive: 1MGGqJEXeRAVfmmh5z6AfoEHUrfeuThW9
     title: "MIT Outing Club recruiting flyer"
     date: "2000-06-01"

@@ -26,6 +26,8 @@ For other cool stories, also check out the [Sean A. Collier Adventure Grant](htt
   .archive-thumbs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px; }
   .archive-thumbs img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; background: #eee; }
   .archive-excerpt { font-size: 16px; line-height: 1.6; }
+  .archive-article { display: block; margin-bottom: 8px; }
+  .archive-article img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; background: #eee; }
   /* Two-handle year slider: two range inputs stacked on one track. */
   .year-range { position: relative; width: 260px; max-width: 100%; height: 34px; }
   .year-range-track { position: absolute; left: 0; right: 0; top: 15px; height: 4px; border-radius: 2px; background: #ddd; }
@@ -79,9 +81,9 @@ For other cool stories, also check out the [Sean A. Collier Adventure Grant](htt
 
 <div class="archive-list" id="archive-list">
   {% for doc in docs %}
-  {% if doc.drive %}{% assign url = "https://drive.google.com/file/d/" | append: doc.drive | append: "/view" %}{% else %}{% assign url = doc.url %}{% endif %}
+  {% if doc.drive %}{% assign url = "https://drive.google.com/file/d/" | append: doc.drive | append: "/view" %}{% elsif doc.link %}{% assign url = doc.link %}{% else %}{% assign url = doc.url %}{% endif %}
   <div class="archive-doc col-xs-12 col-md-6" data-date="{{ doc.date }}" data-type="{{ doc.type }}" data-title="{{ doc.title | escape }}">
-    <h4><a href="{{ url }}">{{ doc.title }}</a></h4>
+    <h4><a href="{{ url }}"{% if doc.link or doc.drive %} target="_blank" rel="noopener"{% endif %}>{{ doc.title }}</a></h4>
     <div class="archive-meta">
       {% if doc.date %}Published {% endif %}{% if doc.date_display %}{{ doc.date_display }}{% else %}{{ doc.date | date: "%b. %-d, %Y" }}{% endif %}
       {% if doc.type %}<span class="label label-primary">{{ doc.type }}</span>{% endif %}
@@ -91,6 +93,12 @@ For other cool stories, also check out the [Sean A. Collier Adventure Grant](htt
       <iframe class="embed-responsive-item" src="https://drive.google.com/file/d/{{ doc.drive }}/preview" title="{{ doc.title | escape }}" loading="lazy" allow="autoplay"></iframe>
     </div>
     <a href="{{ url }}" target="_blank" rel="noopener">Open full size</a>
+    {% elsif doc.link %}
+    <a class="archive-article" href="{{ url }}" target="_blank" rel="noopener">
+      <img src="{{ doc.image }}" alt="" loading="lazy">
+    </a>
+    <p class="archive-excerpt">{% if doc.source %}<em>{{ doc.source }}{% if doc.author %}, by {{ doc.author }}{% endif %}.</em> {% endif %}{{ doc.summary }}</p>
+    <a href="{{ url }}" target="_blank" rel="noopener">Read the full article on {{ doc.source | default: "the web" }} &rarr;</a>
     {% elsif doc.thumbnails %}
     <a class="archive-thumbs" href="{{ url }}">
       {% for thumb in doc.thumbnails %}<img src="{{ thumb }}" alt="" loading="lazy">{% endfor %}
