@@ -40,11 +40,21 @@ For other cool stories, also check out the [Sean A. Collier Adventure Grant](htt
   .archive-article { display: block; margin-bottom: 8px; }
   .archive-note { margin: 4px 0 0; }
   .archive-article img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; background: #eee; }
+  /* A document's viewer is only mounted while it is near the viewport. */
+  .archive-embed { background: #f2f2f2; border: 1px solid #e0e0e0; }
+  .archive-embed-idle { position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+                        display: flex; align-items: center; justify-content: center;
+                        padding: 0 16px; color: #999; font-size: 13px; text-align: center; }
   /* Two-handle year slider: two range inputs stacked on one track. */
-  .year-range { position: relative; width: 260px; max-width: 100%; height: 34px; }
-  .year-range-track { position: absolute; left: 0; right: 0; top: 15px; height: 4px; border-radius: 2px; background: #ddd; }
+  .year-range { position: relative; width: 260px; max-width: 100%; height: 22px; }
+  .year-range-track { position: absolute; left: 0; right: 0; top: 9px; height: 4px; border-radius: 2px; background: #ddd; }
   .year-range-fill { position: absolute; top: 0; bottom: 0; background: #337ab7; border-radius: 2px; }
-  .year-range input[type=range] { position: absolute; left: 0; top: 0; width: 100%; height: 34px; margin: 0; background: none; pointer-events: none; -webkit-appearance: none; appearance: none; }
+  /* Rough count of documents per year, sitting on top of the slider. */
+  .year-hist { display: flex; align-items: flex-end; width: 260px; max-width: 100%;
+               height: 24px; margin-bottom: 0; }
+  .year-hist span { flex: 1 1 0; min-width: 0; min-height: 1px; background: #cfd8e3; }
+  .year-hist span.in-range { background: #337ab7; }
+  .year-range input[type=range] { position: absolute; left: 0; top: 0; width: 100%; height: 22px; margin: 0; background: none; pointer-events: none; -webkit-appearance: none; appearance: none; }
   .year-range input[type=range]::-webkit-slider-runnable-track { background: none; }
   .year-range input[type=range]::-moz-range-track { background: none; }
   .year-range input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; pointer-events: auto; width: 20px; height: 20px; border-radius: 50%; background: #fff; border: 2px solid #337ab7; cursor: pointer; }
@@ -77,6 +87,7 @@ For other cool stories, also check out the [Sean A. Collier Adventure Grant](htt
   {% assign last_year = dated.first.date | slice: 0, 4 %}
   <div class="form-group">
     <label id="archive-years-label">Years: <span id="archive-years-value">{{ first_year }}–{{ last_year }}</span></label><br>
+    <div class="year-hist" id="archive-year-hist" aria-hidden="true"></div>
     <div class="year-range">
       <div class="year-range-track"><div class="year-range-fill" id="archive-years-fill"></div></div>
       <input type="range" id="archive-year-from" min="{{ first_year }}" max="{{ last_year }}" step="1" value="{{ first_year }}" aria-label="From year">
@@ -114,8 +125,8 @@ For other cool stories, also check out the [Sean A. Collier Adventure Grant](htt
     {% comment %}Filled in by the search script when the query is found in the scanned text.{% endcomment %}
     <div class="archive-hits" hidden></div>
     {% if doc.drive %}
-    <div class="embed-responsive" style="padding-bottom: 129%">
-      <iframe class="embed-responsive-item" src="https://drive.google.com/file/d/{{ doc.drive }}/preview" title="{{ doc.title | escape }}" loading="lazy" allow="autoplay"></iframe>
+    <div class="embed-responsive archive-embed" style="padding-bottom: 129%" data-drive="{{ doc.drive }}" data-title="{{ doc.title | escape }}">
+      <span class="archive-embed-idle">{{ doc.title | escape }}</span>
     </div>
     <a href="{{ url }}" target="_blank" rel="noopener">Open full size</a>
     {% elsif doc.link %}
@@ -133,9 +144,23 @@ For other cool stories, also check out the [Sean A. Collier Adventure Grant](htt
     </a>
     <a href="{{ url }}">View all photos &rarr;</a>
     {% else %}
-    {% if doc.clipping %}
+    {% comment %}
+      The card's picture: a transcription's clipping of the original, or a
+      story's own first photograph. `image` in the front matter overrides both,
+      for a story whose opening photo is not the one worth showing.
+    {% endcomment %}
+    {% assign card_image = doc.clipping %}
+    {% if doc.image %}{% assign card_image = doc.image %}{% endif %}
+    {% unless card_image %}
+      {% assign after_img = doc.content | split: '<img ' %}
+      {% if after_img.size > 1 %}
+        {% assign after_src = after_img[1] | split: 'src="' %}
+        {% if after_src.size > 1 %}{% assign card_image = after_src[1] | split: '"' | first %}{% endif %}
+      {% endif %}
+    {% endunless %}
+    {% if card_image %}
     <a class="archive-article" href="{{ url }}">
-      <img src="{{ doc.clipping }}" alt="" loading="lazy">
+      <img src="{{ card_image }}" alt="" loading="lazy">
     </a>
     {% endif %}
     <p class="archive-excerpt">{% if doc.source %}<em>{{ doc.source }}{% if doc.author %}, by {{ doc.author }}{% endif %}.</em> {% elsif doc.author %}<em>By {{ doc.author }}.</em> {% endif %}{{ doc.content | markdownify | strip_html | truncatewords: 70 }}</p>
@@ -171,6 +196,86 @@ For other cool stories, also check out the [Sean A. Collier Adventure Grant](htt
   // about a megabyte, so it is fetched only once someone actually searches,
   // and the card filters keep working on their own if it never arrives.
   var index = null, lowered = null, indexState = 'idle';
+
+  // Drive's preview is a whole application per document, not an image. Several
+  // hundred of them on one page is enough for Google to start refusing the
+  // requests, and the cards that lose the race show an error box instead of a
+  // scan. So keep only the ones near the viewport alive.
+  var LIVE_MAX = 12;
+  var live = [];
+  var scrolling = 0;
+
+  function mount(box) {
+    if (box.querySelector('iframe')) return;
+    var frame = document.createElement('iframe');
+    frame.className = 'embed-responsive-item';
+    frame.src = 'https://drive.google.com/file/d/' + box.getAttribute('data-drive') + '/preview';
+    frame.title = box.getAttribute('data-title') || '';
+    frame.setAttribute('allow', 'autoplay');
+    box.appendChild(frame);
+    live.push(box);
+    if (live.length > LIVE_MAX) evict();
+  }
+
+  function unmount(box) {
+    var frame = box.querySelector('iframe');
+    if (frame) box.removeChild(frame);
+    var i = live.indexOf(box);
+    if (i >= 0) live.splice(i, 1);
+  }
+
+  // Drop whichever live viewer is furthest from the middle of the screen, so
+  // scrolling back a little does not throw away what was just read.
+  function evict() {
+    var middle = window.scrollY + window.innerHeight / 2;
+    var worst = 0, worstDist = -1;
+    for (var i = 0; i < live.length; i++) {
+      var r = live[i].getBoundingClientRect();
+      // A card hidden by a filter has no box at all. Measuring from its empty
+      // rectangle would place it at the top of the document, which can read as
+      // nearer than a document actually on screen -- so retire it first.
+      var d = (!r.height && !r.width) ? Infinity
+            : Math.abs((r.top + window.scrollY + r.height / 2) - middle);
+      if (d > worstDist) { worstDist = d; worst = i; }
+    }
+    unmount(live[worst]);
+  }
+
+  function nearViewport(box) {
+    var r = box.getBoundingClientRect();
+    if (!r.height && !r.width) return false;          // a filtered-out card
+    return r.bottom > -600 && r.top < window.innerHeight + 600;
+  }
+
+  // The observer only calls back when a box's intersection *changes*, and
+  // filtering the list moves cards into view by reordering their neighbours
+  // rather than by scrolling. So after every filter, search or sort, look for
+  // what is on screen instead of waiting to be told.
+  function sweep() {
+    var boxes = document.querySelectorAll('.archive-embed');
+    var added = 0;
+    for (var i = 0; i < boxes.length && added < LIVE_MAX; i++) {
+      if (boxes[i].querySelector('iframe') || !nearViewport(boxes[i])) continue;
+      mount(boxes[i]);
+      added++;
+    }
+  }
+
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) mount(e.target); });
+    }, { rootMargin: '600px 0px' });
+    Array.prototype.forEach.call(document.querySelectorAll('.archive-embed'), function (b) {
+      io.observe(b);
+    });
+  } else {
+    // No observer: sweep on scroll instead, which costs a little more but
+    // keeps the behaviour identical.
+    window.addEventListener('scroll', function () {
+      if (scrolling) return;
+      scrolling = requestAnimationFrame(function () { scrolling = 0; sweep(); });
+    });
+  }
 
   function loadIndex() {
     indexState = 'loading';
@@ -246,6 +351,34 @@ For other cool stories, also check out the [Sean A. Collier Adventure Grant](htt
     return db.localeCompare(da);
   }
 
+  // One bar per year, built once. Heights are set by update(), so the shape
+  // follows whatever the type buttons and the search box are showing.
+  var histBars = (function () {
+    var box = document.getElementById('archive-year-hist');
+    var bars = {};
+    if (!box) return bars;
+    for (var y = minYear; y <= maxYear; y++) {
+      var bar = document.createElement('span');
+      bar.style.height = '0';
+      box.appendChild(bar);
+      bars[y] = bar;
+    }
+    return bars;
+  }());
+
+  function drawHist(counts, from, to) {
+    var most = 0;
+    for (var y in counts) { if (counts[y] > most) most = counts[y]; }
+    for (var year = minYear; year <= maxYear; year++) {
+      var bar = histBars[year];
+      if (!bar) continue;
+      var n = counts[year] || 0;
+      bar.style.height = most ? Math.round(n / most * 100) + '%' : '0';
+      bar.classList.toggle('in-range', year >= from && year <= to);
+      bar.title = n === 1 ? year + ': 1 document' : year + ': ' + n + ' documents';
+    }
+  }
+
   function update() {
     var query = search.value.trim().toLowerCase();
     var from = +yearFrom.value, to = +yearTo.value;
@@ -266,7 +399,7 @@ For other cool stories, also check out the [Sean A. Collier Adventure Grant](htt
       return byDateDesc(a, b);
     });
     if (query && indexState === 'idle') loadIndex();
-    var shown = 0, inText = 0;
+    var shown = 0, inText = 0, counts = {};
     // Reorder with CSS `order` rather than moving nodes, which would reload the iframes.
     sorted.forEach(function (el, i) {
       var year = el.getAttribute('data-date').slice(0, 4);
@@ -274,14 +407,30 @@ For other cool stories, also check out the [Sean A. Collier Adventure Grant](htt
       var onCard = !query || (el.getAttribute('data-search') || '').indexOf(query) >= 0;
       var hits = query ? findHits(el, query) : null;
       var match = matchesType(el) && inRange && (onCard || !!hits);
+      // The bars answer "which years would this search find", so they count
+      // what matches everything except the year range itself.
+      if (year && matchesType(el) && (onCard || !!hits)) {
+        counts[year] = (counts[year] || 0) + 1;
+      }
       // The snippet is worth showing even when the title already matched, so
       // long as the document is actually on screen.
       renderHits(el, match ? hits : null, query);
       if (match && hits && !onCard) inText++;
       el.style.display = match ? '' : 'none';
+      // A card the filters just hid must give its viewer back, or the live
+      // slots fill up with documents nobody can see.
+      if (!match) {
+        var hiddenBox = el.querySelector('.archive-embed');
+        if (hiddenBox) unmount(hiddenBox);
+      }
       el.style.order = i;
       if (match) shown++;
     });
+    drawHist(counts, from, to);
+    sweep();
+    // Showing a snippet changes a card's height, which moves everything below
+    // it; look again once that has settled.
+    requestAnimationFrame(sweep);
     document.getElementById('archive-count').textContent =
       shown === docs.length ? docs.length + ' documents' : 'Showing ' + shown + ' of ' + docs.length + ' documents';
     document.getElementById('archive-empty').style.display = shown ? 'none' : '';
