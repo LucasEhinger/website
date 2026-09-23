@@ -1,8 +1,8 @@
 ---
     permalink: /about/gnarmpfsk
     title: GNARMPFSK
-    # PDFs are listed in _data/gnarmpfsk.yml and hosted in /docs/gnarmpfsk/.
-    # Pages under _pages/about/gnarmpfsk/ with a `keywords` list (stories, photo galleries)
+    # PDFs are listed in _data/gnarmpfsk.yml and hosted on Google Drive.
+    # Pages under _pages/about/gnarmpfsk/ with a `type` (stories, photo galleries)
     # are listed too.
 ---
 
@@ -16,7 +16,7 @@ For other cool stories, also check out the [Sean A. Collier Adventure Grant](htt
 <style>
   .archive-controls { margin: 20px 0; }
   .archive-controls .form-group { margin-right: 20px; margin-bottom: 10px; vertical-align: top; }
-  .archive-keywords .btn { margin: 0 4px 4px 0; }
+  .archive-types .btn { margin: 0 4px 4px 0; }
   .archive-list { display: flex; flex-wrap: wrap; margin: 0 -15px; }
   .archive-doc { margin-bottom: 30px; }
   .archive-doc h4 { margin-bottom: 4px; }
@@ -41,21 +41,22 @@ For other cool stories, also check out the [Sean A. Collier Adventure Grant](htt
 </style>
 
 {% assign data = site.data.gnarmpfsk %}
-{% assign pages = site.pages | where_exp: "p", "p.url contains '/about/gnarmpfsk/'" | where_exp: "p", "p.keywords" %}
+{% assign pages = site.pages | where_exp: "p", "p.url contains '/about/gnarmpfsk/'" | where_exp: "p", "p.type" %}
 {% assign docs = data.documents | concat: pages | sort: "date" | reverse %}
 
 <form class="archive-controls form-inline" onsubmit="return false">
   <div class="form-group">
-    <label>Keyword</label><br>
-    <div class="archive-keywords" role="group" id="archive-keywords">
-      <button type="button" class="btn btn-default active" data-keyword="" aria-pressed="true">All</button>
-      {% for keyword in data.keywords %}
-      <button type="button" class="btn btn-default" data-keyword="{{ keyword }}" aria-pressed="false">{{ keyword }}</button>
+    <label>Type <small class="text-muted">(pick one)</small></label><br>
+    <div class="archive-types" role="group" id="archive-types">
+      <button type="button" class="btn btn-default active" data-type="" aria-pressed="true">All</button>
+      {% for type in data.types %}
+      <button type="button" class="btn btn-default" data-type="{{ type }}" aria-pressed="false">{{ type }}</button>
       {% endfor %}
     </div>
   </div>
-  {% assign first_year = docs.last.date | slice: 0, 4 %}
-  {% assign last_year = docs.first.date | slice: 0, 4 %}
+  {% assign dated = docs | where_exp: "d", "d.date" %}
+  {% assign first_year = dated.last.date | slice: 0, 4 %}
+  {% assign last_year = dated.first.date | slice: 0, 4 %}
   <div class="form-group">
     <label id="archive-years-label">Years: <span id="archive-years-value">{{ first_year }}–{{ last_year }}</span></label><br>
     <div class="year-range">
@@ -69,7 +70,7 @@ For other cool stories, also check out the [Sean A. Collier Adventure Grant](htt
     <select id="archive-sort" class="form-control">
       <option value="date-desc">Date (newest first)</option>
       <option value="date-asc">Date (oldest first)</option>
-      <option value="keyword">Keyword (A–Z)</option>
+      <option value="type">Type (A–Z)</option>
     </select>
   </div>
 </form>
@@ -78,18 +79,18 @@ For other cool stories, also check out the [Sean A. Collier Adventure Grant](htt
 
 <div class="archive-list" id="archive-list">
   {% for doc in docs %}
-  {% if doc.file %}{% assign url = "/docs/gnarmpfsk/" | append: doc.file %}{% else %}{% assign url = doc.url %}{% endif %}
-  <div class="archive-doc col-xs-12 col-md-6" data-date="{{ doc.date }}" data-keywords="{{ doc.keywords | join: '|' }}" data-title="{{ doc.title | escape }}">
+  {% if doc.drive %}{% assign url = "https://drive.google.com/file/d/" | append: doc.drive | append: "/view" %}{% else %}{% assign url = doc.url %}{% endif %}
+  <div class="archive-doc col-xs-12 col-md-6" data-date="{{ doc.date }}" data-type="{{ doc.type }}" data-title="{{ doc.title | escape }}">
     <h4><a href="{{ url }}">{{ doc.title }}</a></h4>
     <div class="archive-meta">
-      Published {% if doc.date_display %}{{ doc.date_display }}{% else %}{{ doc.date | date: "%b. %-d, %Y" }}{% endif %}
-      {% for keyword in doc.keywords %}<span class="label label-primary">{{ keyword }}</span>{% endfor %}
+      {% if doc.date %}Published {% endif %}{% if doc.date_display %}{{ doc.date_display }}{% else %}{{ doc.date | date: "%b. %-d, %Y" }}{% endif %}
+      {% if doc.type %}<span class="label label-primary">{{ doc.type }}</span>{% endif %}
     </div>
-    {% if doc.file %}
+    {% if doc.drive %}
     <div class="embed-responsive" style="padding-bottom: 129%">
-      <iframe class="embed-responsive-item" src="{{ url }}#view=FitH&navpanes=0" title="{{ doc.title | escape }}" loading="lazy"></iframe>
+      <iframe class="embed-responsive-item" src="https://drive.google.com/file/d/{{ doc.drive }}/preview" title="{{ doc.title | escape }}" loading="lazy" allow="autoplay"></iframe>
     </div>
-    <a href="{{ url }}">Open full size</a>
+    <a href="{{ url }}" target="_blank" rel="noopener">Open full size</a>
     {% elsif doc.thumbnails %}
     <a class="archive-thumbs" href="{{ url }}">
       {% for thumb in doc.thumbnails %}<img src="{{ thumb }}" alt="" loading="lazy">{% endfor %}
@@ -109,15 +110,21 @@ For other cool stories, also check out the [Sean A. Collier Adventure Grant](htt
 (function () {
   var list = document.getElementById('archive-list');
   var docs = Array.prototype.slice.call(list.children);
-  var buttons = document.querySelectorAll('#archive-keywords .btn');
+  var buttons = document.querySelectorAll('#archive-types .btn');
   var yearFrom = document.getElementById('archive-year-from');
   var yearTo = document.getElementById('archive-year-to');
   var minYear = +yearFrom.min, maxYear = +yearFrom.max;
   var sortSelect = document.getElementById('archive-sort');
-  var keyword = '';
+  var selected = '';
 
-  function keywordsOf(el) { return el.getAttribute('data-keywords').split('|'); }
-  function byDateDesc(a, b) { return b.getAttribute('data-date').localeCompare(a.getAttribute('data-date')); }
+  function typeOf(el) { return el.getAttribute('data-type') || ''; }
+  function matchesType(el) { return !selected || typeOf(el) === selected; }
+  // Undated documents (empty data-date) always sort last.
+  function byDateDesc(a, b) {
+    var da = a.getAttribute('data-date'), db = b.getAttribute('data-date');
+    if (!da || !db) return !da - !db;
+    return db.localeCompare(da);
+  }
 
   function update() {
     var from = +yearFrom.value, to = +yearTo.value;
@@ -128,21 +135,21 @@ For other cool stories, also check out the [Sean A. Collier Adventure Grant](htt
     document.getElementById('archive-years-value').textContent = from === to ? from : from + '–' + to;
     var sort = sortSelect.value;
     var sorted = docs.slice().sort(function (a, b) {
-      if (sort === 'date-asc') return -byDateDesc(a, b);
-      if (sort === 'keyword') {
-        // Documents with the selected keyword sort by it; otherwise by their first keyword.
-        var ka = keyword && keywordsOf(a).indexOf(keyword) >= 0 ? keyword : keywordsOf(a)[0];
-        var kb = keyword && keywordsOf(b).indexOf(keyword) >= 0 ? keyword : keywordsOf(b)[0];
-        return ka.localeCompare(kb) || byDateDesc(a, b);
+      if (sort === 'date-asc') {
+        if (!a.getAttribute('data-date') || !b.getAttribute('data-date')) return byDateDesc(a, b);
+        return -byDateDesc(a, b);
+      }
+      if (sort === 'type') {
+        return typeOf(a).localeCompare(typeOf(b)) || byDateDesc(a, b);
       }
       return byDateDesc(a, b);
     });
     var shown = 0;
     // Reorder with CSS `order` rather than moving nodes, which would reload the iframes.
     sorted.forEach(function (el, i) {
-      var match = (!keyword || keywordsOf(el).indexOf(keyword) >= 0) &&
-        +el.getAttribute('data-date').slice(0, 4) >= from &&
-        +el.getAttribute('data-date').slice(0, 4) <= to;
+      var year = el.getAttribute('data-date').slice(0, 4);
+      var inRange = year ? +year >= from && +year <= to : from === minYear && to === maxYear;
+      var match = matchesType(el) && inRange;
       el.style.display = match ? '' : 'none';
       el.style.order = i;
       if (match) shown++;
@@ -154,7 +161,7 @@ For other cool stories, also check out the [Sean A. Collier Adventure Grant](htt
 
   Array.prototype.forEach.call(buttons, function (btn) {
     btn.addEventListener('click', function () {
-      keyword = btn.getAttribute('data-keyword');
+      selected = btn.getAttribute('data-type');
       Array.prototype.forEach.call(buttons, function (b) {
         b.classList.toggle('active', b === btn);
         b.setAttribute('aria-pressed', b === btn ? 'true' : 'false');

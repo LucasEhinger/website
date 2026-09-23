@@ -1,61 +1,274 @@
-# Archive documents shown on /about/gnarmpfsk. Files live in /docs/gnarmpfsk/.
+# Archive documents shown on /about/gnarmpfsk.
 #
-# date:         YYYY-MM-DD, used for sorting and the year filter.
+# drive:        Google Drive file ID (the part after /file/d/ in its link). The
+#               file must be shared as "Anyone with the link can view".
+# date:         YYYY-MM-DD, used for sorting and the year filter. Leave it out
+#               for undated documents; they are listed last.
 #               For approximate dates, pick a best guess and set date_display.
 # date_display: optional; shown instead of the formatted date (e.g. "c. 1980").
-# keywords:     one or more of the keywords listed below.
+# type:         exactly one of the types listed below.
 
-keywords:
-  - Stories
+types:
   - GNARMPFSK
-  - Winter School
-  - Cabins
+  - News article
+  - Stories
   - Other
-
 documents:
-  - file: gnarmpfsk-1993-06.pdf
-    title: Gnarmpfsk, June 1993
+  - drive: 1MGGqJEXeRAVfmmh5z6AfoEHUrfeuThW9
+    title: "MIT Outing Club recruiting flyer"
+    date: "2000-06-01"
+    date_display: c. 2000
+    type: Other
+
+  - drive: 1nekgT1o1wy2BfubHuauiRd-bWXEpn4lT
+    title: "Gnarmpfsk, June 17, 1993"
     date: "1993-06-17"
-    keywords: [GNARMPFSK, Cabins]
+    type: GNARMPFSK
 
-  - file: gnarmpfsk-1993-winter.pdf
-    title: Gnarmpfsk, Winter 1993
-    date: "1993-01-01"
+  - drive: 1_SbFJYJB7pvj2bXjGgYP1f9IG9d2YbLF
+    title: "Gnarmpfsk, Winter 1993"
+    date: "1993-01-15"
     date_display: Winter 1993
-    keywords: [GNARMPFSK, Stories, Winter School, Cabins]
+    type: GNARMPFSK
 
-  - file: gnarmpfsk-1979-10.pdf
-    title: GNARMPFSK, October 1979
-    date: "1979-10-04"
-    keywords: [GNARMPFSK, Cabins]
+  - drive: 16CB8sKgBpgW89Ec1iyp7Pjcx4vOe8qj1
+    title: "GNARMFSK, September 27, 1989"
+    date: "1989-09-27"
+    type: GNARMPFSK
 
-  - file: gnarmpfsk-1981-03.pdf
-    title: GNARMPFSK, March 1981
-    date: "1981-03-01"
+  - drive: 1pRAFGapCuYCUZzIzjtjiHwE2YMBO20Vi
+    title: "GNARMFSK, May 15, 1989"
+    date: "1989-05-15"
+    type: GNARMPFSK
+
+  - drive: 160-8HehZqsMQuykMrql4Ka4sJUWDJ67W
+    title: "GNARMPFSK, c. March 1988 (hand-labelled 1983)"
+    date: "1988-03-15"
+    date_display: c. March 1988
+    type: GNARMPFSK
+
+  - drive: 1mqw30jkV-5rfaKpnkf82vHl9RbOCcdp2
+    title: "GNARMPFSK, October 2, 1986 — Vol. 87 No. 0.9"
+    date: "1986-10-02"
+    type: GNARMPFSK
+
+  - drive: 1ntB8ioFNKWrWF55M8SmcnoUdLLLZ9z6S
+    title: "General Meeting flyer"
+    date: "1986-09-15"
+    type: Other
+
+  - drive: 1PsrVf1BdjR7o5yWEkQdUh-CjFy5t4AgM
+    title: "GNARMPFSK, April 1986 — Vol. 86 No. 1"
+    date: "1986-04-15"
+    date_display: April 1986
+    type: GNARMPFSK
+
+  - drive: 1yy_EjmODV_r8-zz02dGkNZgGeEIh_B3u
+    title: "MIT Outing Club flyer for new students"
+    date: "1985-09-15"
+    date_display: Fall 1985
+    type: Other
+
+  - drive: 1ALlfVEUVoWZjDUHAZJf86Q9O53tlUB9O
+    title: "GNARMPFSK, May 12, 1984 — Summer Issue"
+    date: "1984-05-12"
+    type: GNARMPFSK
+
+  - drive: 1nFwlXfZmW0txYswZ3iL1gXFlNwyl5RhI
+    title: "GNARMPFSK, March 29, 1984 — Spring Issue"
+    date: "1984-03-29"
+    type: GNARMPFSK
+
+  - drive: 1ldCJXsV1wD5CmdnjDPUJz3H9q52w9SXI
+    title: "GNARMPFSK, March 15, 1984"
+    date: "1984-03-15"
+    type: GNARMPFSK
+
+  - drive: 1LLEMIQYGFohjrybuRd4npxzdmkQw6bX5
+    title: "Annual Meeting flyer"
+    date: "1984-03-12"
+    type: Other
+
+  - drive: 11Ub6mAzoaSVSzwkaCcmfBXn_gzX6EDJm
+    title: "GNARMPFSK, November 20, 1983 — Holiday Issue"
+    date: "1983-11-20"
+    type: GNARMPFSK
+
+  - drive: 1OMSLdlL259UZZ9W3oGgiQ41P_rTkZsFS
+    title: "GNARMPFSK, October 13, 1983 — James G. Watt Memorial Issue"
+    date: "1983-10-13"
+    type: GNARMPFSK
+
+  - drive: 1kSWnlWmfpVGyPOqx22MhyQkYYrJOByvM
+    title: "GNARMPFSK, May 12, 1983 — Summer Issue"
+    date: "1983-05-12"
+    type: GNARMPFSK
+
+  - drive: 1vYArHBXL-3W4l3tNYc244snrOnSYDFQe
+    title: "Letter from James Bjorken on the GNARMPFSK name"
+    date: "1983-04-29"
+    type: Other
+
+  - drive: 1jHMD63oTUBrYrbyT1qYLEMUaCBjkB6HN
+    title: "Technology Review article on MITOC"
+    date: "1983-04-15"
+    date_display: c. April 1983
+    type: "News article"
+
+  - drive: 1oS5mEIzXPsmxj_a2qVTD6w6E5lc8aDgz
+    title: "GNARMPFSK, March 9, 1983 — Spring Issue"
+    date: "1983-03-09"
+    type: GNARMPFSK
+
+  - drive: 1jtEa8G0Zr5L8w8k-DVcC6Wj26m4z7QA-
+    title: "GNARMPFSK, December 6, 1982 — Winter Issue"
+    date: "1982-12-06"
+    type: GNARMPFSK
+
+  - drive: 19sAwVN51hoNaFw-N6HRsfuUgOmKJXuOL
+    title: "GNARMPFSK, October 18, 1982 — October Issue (page 1 only)"
+    date: "1982-10-18"
+    type: GNARMPFSK
+
+  - drive: 1wASkM_ISthhH3L-Png1Oq4e7O0cvmP7G
+    title: "GNARMPFSK, May 10, 1982 — Final Issue"
+    date: "1982-05-10"
+    type: GNARMPFSK
+
+  - drive: 1Gh3iVrQxwTHMB3KZrJVwELjSNC17baNy
+    title: "GNARMPFSK, March 17, 1982 — Spring Issue"
+    date: "1982-03-17"
+    type: GNARMPFSK
+
+  - drive: 1b2VJLy4ASKPjbOSSHGk09dHQiIReCUtg
+    title: "GNARMPFSK, November 1, 1981 — Fall Issue"
+    date: "1981-11-01"
+    type: GNARMPFSK
+
+  - drive: 1DZET2BxwQD8iGyPlSd6Uh0ce2jFCXUUZ
+    title: "GNARMPFSK, March 1981"
+    date: "1981-03-15"
     date_display: March 1981
-    keywords: [GNARMPFSK, Cabins]
+    type: GNARMPFSK
 
-  - file: mitoc-flyer-c1980.pdf
-    title: MIT Outing Club flyer
+  - drive: 1_-jPGcc-UYJkQAq1JXRHQLRBhYpD8NnX
+    title: "MIT Outing Club flyer"
     date: "1980-06-01"
     date_display: c. 1980
-    keywords: [Other]
+    type: Other
 
-  - file: mitoc-flyer-1985.pdf
-    title: MIT Outing Club flyer for new students
-    date: "1985-09-01"
-    date_display: Fall 1985
-    keywords: [Cabins]
+  - drive: 1ESwABYjqUeFogBNAKNNJwU7aFbwTYJe4
+    title: "GNARMPFSK, March 13, 1980 — Elections Monday"
+    date: "1980-03-13"
+    type: GNARMPFSK
 
-  - file: winter-school-info.pdf
-    title: Winter Mountaineering School info
-    date: "1981-01-01"
-    date_display: c. 1981
-    keywords: [Winter School]
+  - drive: 1V11a3-D0NXEF2bJmmAV_zz6zz6jNfQj7
+    title: "What You Mean GNARMPFSK, February 7, 1980 — No. 4"
+    date: "1980-02-07"
+    type: GNARMPFSK
 
-  - file: winter-school-daytrip-checklist.pdf
-    title: Winter daytrip checklist
-    date: "1981-01-01"
-    date_display: c. 1981
-    keywords: [Winter School]
+  - drive: 1RX2L2P6fae60pIPc4Ai0EEsHdO6vGGgo
+    title: "GNARMFSK, October 4, 1979 — Vol. 2"
+    date: "1979-10-04"
+    type: GNARMPFSK
 
+  - drive: 1Wt6c5Otqqj1JR8cxqRdeSY4l64C7t1QG
+    title: "GNARMPFSK, September 5, 1974 — Back to School Issue"
+    date: "1974-09-05"
+    type: GNARMPFSK
+
+  - drive: 1QGF5f4uzSsbrVaHO3WKNQsmebxRe2n17
+    title: "Second Biannual Infamous Mattawamkeag Trip, draft"
+    date: "1974-05-15"
+    date_display: May 1974
+    type: Stories
+
+  - drive: 1f0jHSsNYvUs70-ODbvCUG6Yu3zM3995m
+    title: "GNARMPFSK, October 1973"
+    date: "1973-10-15"
+    date_display: October 1973
+    type: GNARMPFSK
+
+  - drive: 19X_C6v1JGgBYk9otic3scbJ0a4VNLzCa
+    title: "Presidential Weekend trip to Whitehorse, John Hollerbach"
+    date: "1973-06-01"
+    date_display: c. 1973
+    type: Stories
+
+  - drive: 1pOiVyAvcPAQvmtQ6ili5UBxaOD_KLVAA
+    title: "GNARMPFSK, May 1973"
+    date: "1973-05-15"
+    date_display: May 1973
+    type: GNARMPFSK
+
+  - drive: 1_p2PHhdHKUU4TKSSSDcWeNFKGc2UqJmn
+    title: "GNARMPFSK, April 1973"
+    date: "1973-04-15"
+    date_display: April 1973
+    type: GNARMPFSK
+
+  - drive: 1l1zqFB8GsDXJa4IRC5pbMj_J0stLckGO
+    title: "GNARMPFSK, January 1973"
+    date: "1973-01-15"
+    date_display: January 1973
+    type: GNARMPFSK
+
+  - drive: 1CeM6Y19Ui3nqpRCZKQKjCc6jHEeDnUwy
+    title: "GNARMPFSK, November 1972"
+    date: "1972-11-15"
+    date_display: November 1972
+    type: GNARMPFSK
+
+  - drive: 1uw1iHG6679Vnc4hIXTq7-MUyHuZ82UWA
+    title: "GNARMPFSK, November 11, 1971"
+    date: "1971-11-11"
+    type: GNARMPFSK
+
+  - drive: 18XXfvvqRUSZTxbK5TdOfeBgpVBazNkfF
+    title: "GNARMPFSK, March 12, 1971"
+    date: "1971-03-12"
+    type: GNARMPFSK
+
+  - drive: 1U_Vzp-tT-RDn2SC35rWaS34hxJ_jQrl1
+    title: "Mount Katahdin IOCA Winter Mountaineering Trip flyer"
+    date: "1965-11-15"
+    date_display: c. November 1965
+    type: Other
+
+  - drive: 1XWsoRyZF055Cli5FvgkjEEHUlOz383O3
+    title: "An Introduction to MITOC, cabin rules and equipment policy"
+    date: "1960-06-01"
+    date_display: c. 1960
+    type: Other
+
+  - drive: 14DqAyPb2wKDK66_WS-LfCqMSlF_Gm70l
+    title: "Thanksgiving Adirondack Trip flyer"
+    date: "1959-11-15"
+    date_display: c. November 1959
+    type: Other
+
+  - drive: 1Y5ch5ehlLr_A4TYFIOz8oy5RY6FfYb5l
+    title: "GNARMPFSK, c. March 1958 (formerly MITOC News)"
+    date: "1958-03-15"
+    date_display: c. March 1958
+    type: GNARMPFSK
+
+  - drive: 1uvd4rIzelid6Uw-aH1vg806fdTYOYffj
+    title: "Conditioning trip to Liberty Spring Shelter, trip report"
+    date_display: Undated
+    type: Stories
+
+  - drive: 1TXdspXsA7qNejaU2jbeaYgNpHjksWUWW
+    title: "It Ain't So, Katahdin sunrise essay"
+    date_display: Undated
+    type: Stories
+
+  - drive: 1nV7E_-orQEtt1gDlotSrOheH2KpOtqi7
+    title: "Map, How to Get to the Gap"
+    date_display: Undated
+    type: Other
+
+  - drive: 1LHJImJqZy3nQO2Q3w1FdztO8boGWEWOj
+    title: "Skiing Tuckerman Ravine, trip report"
+    date_display: Undated
+    type: Stories

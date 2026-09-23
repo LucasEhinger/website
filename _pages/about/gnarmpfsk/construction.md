@@ -5,7 +5,7 @@
     # and /images/gnarmpfsk/<folder>/thumbs/, numbered 01.jpg, 02.jpg, ...
     date: "1993-09-01"
     date_display: c. 1993
-    keywords: [Cabins]
+    type: Other
     thumbnails:
       - /images/gnarmpfsk/cabin/thumbs/01.jpg
       - /images/gnarmpfsk/yurt/thumbs/01.jpg
