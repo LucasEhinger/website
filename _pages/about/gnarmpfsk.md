@@ -6,9 +6,9 @@
     # are listed too.
 ---
 
-GNARMPFSK---the sound made by a newly-awoken hiker in a wet sleeping bag on a frosty morning, as they realize that if they are to have any hot chocolate they are going to have to get up and make it themselves---is MITOC's newsletter, dating back to 1955!
+GNARMPFSK---the sound made by a newly-awoken hiker in a wet sleeping bag on a frosty morning, as they realize that if they are to have any hot chocolate they are going to have to get up and make it themselves---is MITOC's newsletter!
 
-Here, you can read (a selection of) old GNARMPFSK newsletters, as well as more recent stories from current and former MITOC'ers!
+Here, you can read (a selection of) GNARMPFSK newsletters, as well as more recent stories from current and former MITOC'ers!
 
 For other cool stories, also check out the [Sean A. Collier Adventure Grant](https://mitoc-cag.mit.edu/) or the [trip report archive (1946-2017)](/legacy-gallery/)!
 
